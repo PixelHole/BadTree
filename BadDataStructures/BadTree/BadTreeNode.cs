@@ -98,7 +98,7 @@ namespace BadTree.BadDataStructures.BadTree
         {
             Add(new BadTreeNode<T>(data, this));
         }
-        public void AddChildren(T[] values)
+        public void AddChildren(IEnumerable<T> values)
         {
             foreach (var value in values)
             {
@@ -108,7 +108,7 @@ namespace BadTree.BadDataStructures.BadTree
         
         // -     Graft
         public void GraftTree(BadTreeNode<T> root) => Add(root);
-        public void GraftTrees(BadTreeNode<T>[] roots)
+        public void GraftTrees(IEnumerable<BadTreeNode<T>> roots)
         {
             foreach (var root in roots)
             {
@@ -123,6 +123,7 @@ namespace BadTree.BadDataStructures.BadTree
             RemoveAt(index);
         }
         public void RemoveChildWithData(T data) => Remove(FindChildWithData(data));
+        public void ClearChildren() => KillAllChildren();
 
 
         private bool IsIndexInRange(int index) => index > 0 && index < Children.Count;

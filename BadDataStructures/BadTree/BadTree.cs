@@ -153,10 +153,24 @@ namespace BadTree.BadDataStructures.BadTree
         
         
         //      Remove
-        public void RemoveAt(int[]? address)
+        public void RemoveNodeAt(int[]? address) => RemoveSubTreeAt(address, true);
+        public void RemoveSubTreeAt(int[]? address, bool keepChildren)
         {
+            if (address == null)
+            {
+                Root.ClearChildren();
+                return;
+            }
+
+            var node = GetNodeAtAddress(address);
             
+            if (keepChildren) node.Parent.GraftTrees(node.Children);
+            
+            node.Parent.RemoveChildAt(address[address.Length - 1]);
+            
+            CalculateDepth();
         }
+        
         
         
         //      Get
