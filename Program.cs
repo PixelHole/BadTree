@@ -1,4 +1,7 @@
-﻿namespace BadTree
+﻿using System;
+using BadTree.BadDataStructures.BadTree;
+
+namespace BadTree
 {
     internal class Program
     {

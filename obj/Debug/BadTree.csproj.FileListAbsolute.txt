@@ -1,0 +1,7 @@
+M:\Rider projs\BadTree\BadTree\bin\Debug\BadTree.exe
+M:\Rider projs\BadTree\BadTree\bin\Debug\BadTree.pdb
+M:\Rider projs\BadTree\BadTree\obj\Debug\BadTree.csproj.AssemblyReference.cache
+M:\Rider projs\BadTree\BadTree\obj\Debug\BadTree.csproj.SuggestedBindingRedirects.cache
+M:\Rider projs\BadTree\BadTree\obj\Debug\BadTree.csproj.CoreCompileInputs.cache
+M:\Rider projs\BadTree\BadTree\obj\Debug\BadTree.exe
+M:\Rider projs\BadTree\BadTree\obj\Debug\BadTree.pdb
