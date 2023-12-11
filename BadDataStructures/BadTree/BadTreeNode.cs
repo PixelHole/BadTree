@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace BadTree.BadDataStructures.BadTree
 {
@@ -125,7 +126,27 @@ namespace BadTree.BadDataStructures.BadTree
         public void RemoveChildWithData(T data) => Remove(FindChildWithData(data));
         public void ClearChildren() => KillAllChildren();
 
+        
+        // -    Print
+        public string GetStringRepresentation()
+        {
+            StringBuilder builder = new StringBuilder($"[{Data}]");
 
+            foreach (var child in Children)
+            {
+                builder.Append('\n');
+                for (int i = 0; i < child.Level - 2; i++)
+                {
+                    builder.Append("        ");
+                }
+                builder.Append($"└──────{child.GetStringRepresentation()}");
+            }
+
+            return builder.ToString();
+        }
+
+        
+        // ----------- Internal Functions -----------
         private bool IsIndexInRange(int index) => index > 0 && index < Children.Count;
         public int CompareTo(object obj)
         {

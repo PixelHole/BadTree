@@ -306,7 +306,7 @@ namespace BadTree.BadDataStructures.BadTree
         public string GetFancyRepresentation(bool forwards)
         {
             StringBuilder result = new StringBuilder();
-
+            
             BadTreeNode<T> lastNode = null; 
             
             foreach (var node in GetEnumerator(forwards))
