@@ -1,6 +1,7 @@
 ﻿#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace BadTree.BadDataStructures.BadTree
@@ -13,6 +14,8 @@ namespace BadTree.BadDataStructures.BadTree
         public BadTreeNode<T> Root { get; private set; } = new BadTreeNode<T>(default(T), null);
 
         public int Depth { get; private set; } = 1;
+
+        private const int EndOfAddressNumber = -1;
 
 
         // -------- Internal Functions --------
@@ -28,11 +31,15 @@ namespace BadTree.BadDataStructures.BadTree
             Root = root;
         }
         
+        
         // -    Utility
 
         private void CalculateDepth()
         {
-            
+            foreach (var node in GetEnumerator(false))
+            {
+                if (node.Level > Depth) Depth = node.Level;
+            }
         }
         
         
@@ -163,12 +170,13 @@ namespace BadTree.BadDataStructures.BadTree
         }
         public BadTreeNode<T> GetNodeAtAddress(int[] address)
         {
-            if (address.Length > Depth) throw new IndexOutOfRangeException("the given address does not exist");
+            //if (address.Length > Depth) throw new IndexOutOfRangeException("the given address does not exist");
 
             var node = Root;
 
             for (int i = 0; i < address.Length; i++)
             {
+                if (address[i] == EndOfAddressNumber) break;
                 try
                 {
                     node = node.GetChildAt(address[i]);
@@ -181,12 +189,9 @@ namespace BadTree.BadDataStructures.BadTree
 
             return node;
         }
-
-
-        //      Print
-        public string GetFancyRepresentation()
+        public IEnumerable<BadTreeNode<T>> GetEnumerator(bool Forwards = true)
         {
-            StringBuilder result = new StringBuilder();
+            var enumerable = new List<BadTreeNode<T>>();
             
             BadTreeNode<T> node = Root;
 
@@ -197,13 +202,116 @@ namespace BadTree.BadDataStructures.BadTree
             while (children.Count > 0)
             {
                 node = children.Dequeue();
-                
-                result.Append($"[{node.Data}]");
 
-                foreach (var child in node.children)
+                enumerable.Add(node);
+
+                foreach (var child in node.Children)
                 {
                     children.Enqueue(child);
                 }
+            }
+
+            if (!Forwards) enumerable.Reverse();
+            
+            return enumerable;
+        }
+        
+        
+        //      Find
+        public int[]? FindNodeAddressWithData(T data)
+        {
+            if (Root.Data.CompareTo(data) == 0) return null;
+            
+            int[]? address = new int[Depth - 1];
+            var enumerator = GetEnumerator().GetEnumerator();
+
+            BadTreeNode<T> match = null;
+
+            enumerator.MoveNext();
+            
+            while (enumerator.Current != null)
+            {
+                if (enumerator.Current.Data.CompareTo(data) == 0)
+                {
+                    match = enumerator.Current;
+                    break;
+                }
+
+                enumerator.MoveNext();
+            }
+
+            if (match == null) return new[] { -1 };
+
+            for (int i = match.Level - 2; i >= 0; i--)
+            {
+                if (match.IsRoot) break;
+                address[i] = match.Parent.GetIndexOfChild(match);
+                match = match.Parent;
+            }
+
+            return address;
+        }
+        public BadTreeNode<T> FindClosestParent(BadTreeNode<T> a, BadTreeNode<T> b)
+        {
+            return FindClosestAncestorWithDistance(a, b).ClosestParent;
+        }
+        public int FindDistanceBetweenNodes(BadTreeNode<T> a, BadTreeNode<T> b)
+        {
+            return FindClosestAncestorWithDistance(a, b).distance;
+        }
+        public (BadTreeNode<T> ClosestParent, int distance) FindClosestAncestorWithDistance(BadTreeNode<T> a, BadTreeNode<T> b)
+        {
+            if (a.Level == 1) return (a, b.Level - 1);
+            if (b.Level == 1) return (b, a.Level - 1);
+
+            int distance = 0;
+            
+            while (b.Level > a.Level)
+            {
+                distance++;
+                b = b.Parent;
+            }
+
+            while (a.Level > b.Level)
+            {
+                distance++;
+                a = a.Parent;
+            }
+
+            while (a.CompareTo(b) != 0)
+            {
+                distance++;
+                a = a.Parent;
+                b = b.Parent;
+            }
+
+            return (a, distance);
+        }
+        
+        //      Print
+        public string GetFancyRepresentation(bool forwards)
+        {
+            StringBuilder result = new StringBuilder();
+
+            BadTreeNode<T> lastNode = null; 
+            
+            foreach (var node in GetEnumerator(forwards))
+            {
+                if (lastNode != null)
+                {
+                    if (lastNode.Level < node.Level && forwards)
+                    {
+                        result.Append("\n");
+                    }
+                    else if (lastNode.Level > node.Level)
+                    {
+                        result.Append("\n");
+                    }
+                }
+                
+                result.Append($"[{node.Data}] ");
+
+                lastNode = node;
             }
 
             return result.ToString();

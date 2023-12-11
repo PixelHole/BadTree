@@ -16,13 +16,19 @@ namespace BadTree.BadDataStructures.BadTree
         public BadTreeNode<T> Parent { get; private set; }
 
         /// <summary>
-        /// The linked list containing all the children of this node
+        /// The linked list containing all the Children of this node
         /// </summary>
-        public readonly List<BadTreeNode<T>> children = new();
+        public List<BadTreeNode<T>> Children { get; private set; } = new();
 
-        
+        /// <summary>
+        /// The level of this node
+        /// </summary>
         public int Level { get; private set; }
 
+
+        public bool IsDeadEnd => Children.Count == 0;
+        public bool IsRoot => Level == 1;
+        
         // Constructors
         
         public BadTreeNode(T data, BadTreeNode<T> parent)
@@ -45,21 +51,21 @@ namespace BadTree.BadDataStructures.BadTree
         private void Add(BadTreeNode<T> newChild)
         {
             if (newChild == null) return;
-            children.Add(newChild);
+            Children.Add(newChild);
         }
 
         private void Remove(BadTreeNode<T> child)
         {
-            children.Remove(child);
+            Children.Remove(child);
         }
         private void RemoveAt(int index)
         {
-            children.RemoveAt(index);
+            Children.RemoveAt(index);
         }
 
         private void KillAllChildren()
         {
-            children.Clear();
+            Children.Clear();
         }
 
         
@@ -67,13 +73,21 @@ namespace BadTree.BadDataStructures.BadTree
         // -     Find
         public BadTreeNode<T> FindChildWithData(T data)
         {
-            return children.Find(node => node.Data.CompareTo(data) == 0);
+            return Children.Find(node => node.Data.CompareTo(data) == 0);
+        }
+        public int FindChildIndexWithData(T data)
+        {
+            return Children.IndexOf(Children.Find(node => node.Data.CompareTo(data) == 0));
         }
 
         // -     Get
         public BadTreeNode<T> GetChildAt(int index)
         {
-            return children[index];
+            return Children[index];
+        }
+        public int GetIndexOfChild(BadTreeNode<T> child)
+        {
+            return Children.IndexOf(child);
         }
         
         // -     Set
@@ -111,11 +125,15 @@ namespace BadTree.BadDataStructures.BadTree
         public void RemoveChildWithData(T data) => Remove(FindChildWithData(data));
 
 
-        private bool IsIndexInRange(int index) => index > 0 && index < children.Count;
+        private bool IsIndexInRange(int index) => index > 0 && index < Children.Count;
         public int CompareTo(object obj)
         {
             if (obj is not BadTreeNode<T> node) return -1;
 
+            if ((Parent == null && node.Parent != null) || (Parent != null && node.Parent == null)) return -1;
+
+            if (Parent == null && node.Parent == null && Data.CompareTo(node.Data) == 0) return 0;
+            
             if (Data.CompareTo(node.Data) == 0
                 && Parent.CompareTo(node.Parent) == 0)
             {
