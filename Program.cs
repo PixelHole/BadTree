@@ -15,7 +15,7 @@ namespace BadTree
             
             test.AddAt(new []{0, 1}, 6);
 
-            Console.WriteLine(test.Root.GetStringRepresentation());
+            Console.WriteLine(test.Root.GetSubTreeString());
             Console.WriteLine();
         }
     }
